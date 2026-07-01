@@ -1,16 +1,28 @@
 import { useState } from "react";
 import type { Orcamento, QuoteStatus } from "@/types";
 import { useQuotes } from "@/hooks/useQuotes";
+import { useTheme } from "@/hooks/useTheme";
 import { Dashboard } from "@/components/Dashboard";
 import { QuoteList } from "@/components/QuoteList";
 import { QuoteForm, type OrcamentoForm } from "@/components/QuoteForm";
 import { CompanyModal } from "@/components/CompanyModal";
 import { PwaManager } from "@/components/PwaManager";
-import { Button, LogoLockup, PlusIcon, SettingsIcon } from "@/components/ui";
+import { ToastProvider } from "@/components/Toast";
+import {
+  AnimatedBackground,
+  Button,
+  LogoLockup,
+  PlusIcon,
+  SettingsIcon,
+  ThemeToggle,
+} from "@/components/ui";
 
-type View = { type: "lista" } | { type: "novo" } | { type: "editar"; orcamento: Orcamento };
+type View =
+  | { type: "lista" }
+  | { type: "novo" }
+  | { type: "editar"; orcamento: Orcamento };
 
-export default function App() {
+function Shell() {
   const {
     orcamentos,
     company,
@@ -19,6 +31,7 @@ export default function App() {
     removerOrcamento,
     salvarCompany,
   } = useQuotes();
+  const { theme, toggle } = useTheme();
   const [view, setView] = useState<View>({ type: "lista" });
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -38,23 +51,25 @@ export default function App() {
     atualizarOrcamento(id, { status });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100">
+    <div className="relative flex min-h-screen flex-col">
+      <AnimatedBackground />
       <PwaManager hidden={view.type !== "lista"} />
 
       {/* Cabeçalho */}
-      <header className="sticky top-0 z-20 border-b border-slate-100 bg-white/85 backdrop-blur-md">
+      <header className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/70 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/70">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <LogoLockup />
           <div className="flex items-center gap-2">
+            <ThemeToggle theme={theme} onToggle={toggle} />
             <button
               onClick={() => setSettingsOpen(true)}
-              className="rounded-xl p-2.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+              className="rounded-xl border border-slate-200 bg-white p-2.5 text-slate-500 transition hover:border-sky-300 hover:text-sky-500 hover:shadow-md hover:shadow-sky-500/10 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:border-sky-400/40"
               aria-label="Configurações da empresa"
               title="Dados da empresa"
             >
               <SettingsIcon className="h-5 w-5" />
             </button>
-            <Button onClick={() => setView({ type: "novo" })} className="shadow-sm">
+            <Button onClick={() => setView({ type: "novo" })}>
               <PlusIcon className="h-4 w-4" />
               <span className="hidden sm:inline">Novo Orçamento</span>
               <span className="sm:hidden">Novo</span>
@@ -64,35 +79,37 @@ export default function App() {
       </header>
 
       {/* Conteúdo */}
-      <main className="mx-auto max-w-6xl px-4 py-6">
-        {view.type === "lista" ? (
-          <div className="space-y-6">
-            <Dashboard orcamentos={orcamentos} />
-            <QuoteList
-              orcamentos={orcamentos}
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">
+        <div key={view.type} className="animate-fade-up">
+          {view.type === "lista" ? (
+            <div className="space-y-6">
+              <Dashboard orcamentos={orcamentos} />
+              <QuoteList
+                orcamentos={orcamentos}
+                company={company}
+                onEditar={(o) => setView({ type: "editar", orcamento: o })}
+                onRemover={removerOrcamento}
+                onStatus={trocarStatus}
+              />
+            </div>
+          ) : (
+            <QuoteForm
+              inicial={view.type === "editar" ? view.orcamento : null}
               company={company}
-              onEditar={(o) => setView({ type: "editar", orcamento: o })}
-              onRemover={removerOrcamento}
-              onStatus={trocarStatus}
+              onSalvar={salvar}
+              onCancelar={() => setView({ type: "lista" })}
             />
-          </div>
-        ) : (
-          <QuoteForm
-            inicial={view.type === "editar" ? view.orcamento : null}
-            company={company}
-            onSalvar={salvar}
-            onCancelar={() => setView({ type: "lista" })}
-          />
-        )}
+          )}
+        </div>
       </main>
 
       {/* Rodapé */}
-      <footer className="border-t border-slate-100 bg-white/60 py-6">
+      <footer className="border-t border-slate-200/70 bg-white/50 py-6 backdrop-blur-sm dark:border-white/10 dark:bg-slate-950/40">
         <div className="mx-auto max-w-6xl px-4 text-center">
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             {company.nome} · Sistema de Orçamentos
           </p>
-          <p className="mt-1 text-[11px] text-slate-300">
+          <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-600">
             Funciona offline · Dados salvos neste dispositivo · PWA
           </p>
         </div>
@@ -105,5 +122,13 @@ export default function App() {
         onSalvar={salvarCompany}
       />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ToastProvider>
+      <Shell />
+    </ToastProvider>
   );
 }

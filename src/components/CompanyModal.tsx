@@ -108,8 +108,10 @@ export function CompanyModal({ open, company, onClose, onSalvar }: Props) {
                 key={c}
                 type="button"
                 onClick={() => set("corPrimaria", c)}
-                className={`h-8 w-8 rounded-full ring-2 ring-offset-2 transition ${
-                  form.corPrimaria === c ? "ring-slate-900" : "ring-transparent"
+                className={`h-9 w-9 rounded-full ring-2 ring-offset-2 transition hover:scale-110 dark:ring-offset-slate-900 ${
+                  form.corPrimaria === c
+                    ? "ring-slate-900 dark:ring-white scale-110"
+                    : "ring-transparent"
                 }`}
                 style={{ backgroundColor: c }}
                 aria-label={`Cor ${c}`}

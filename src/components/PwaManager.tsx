@@ -47,11 +47,11 @@ export function PwaManager({ hidden = false }: { hidden?: boolean }) {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 p-3">
-      <div className="mx-auto flex max-w-md items-center gap-3 rounded-2xl bg-slate-900 p-3 text-white shadow-2xl ring-1 ring-white/10">
+      <div className="mx-auto flex max-w-md animate-fade-up items-center gap-3 rounded-2xl bg-slate-900 p-3 text-white shadow-2xl ring-1 ring-white/10">
         <img
           src="/icon-192.png"
           alt="INTECH"
-          className="h-10 w-10 rounded-lg"
+          className="h-10 w-10 rounded-xl"
         />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-bold">Instalar aplicativo</p>
