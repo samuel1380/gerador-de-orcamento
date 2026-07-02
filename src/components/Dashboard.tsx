@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { Orcamento } from "@/types";
 import { calcularTotal } from "@/utils/calc";
-import { formatCurrency } from "@/utils/format";
+import { formatCurrency, parseLocalDate } from "@/utils/format";
 import { AnimatedNumber } from "./ui";
 
 export function Dashboard({ orcamentos }: { orcamentos: Orcamento[] }) {
@@ -14,7 +14,8 @@ export function Dashboard({ orcamentos }: { orcamentos: Orcamento[] }) {
 
     const agora = new Date();
     const doMes = orcamentos.filter((o) => {
-      const d = new Date(o.data);
+      const d = parseLocalDate(o.data);
+      if (isNaN(d.getTime())) return false;
       return (
         d.getMonth() === agora.getMonth() &&
         d.getFullYear() === agora.getFullYear()

@@ -1,11 +1,14 @@
 import { useMemo, useState, type ReactNode } from "react";
 import type { CompanyInfo, Orcamento, ServiceItem } from "@/types";
-import { servicosPreDefinidos } from "@/data/company";
 import { calcularSubtotal, calcularTotal, itemTotal } from "@/utils/calc";
-import { formatCurrency, uid } from "@/utils/format";
+import { formatCurrency, todayLocal, uid } from "@/utils/format";
+
+/** Mostra vazio (placeholder) quando o número é 0 para facilitar a digitação. */
+const numField = (n: number): string => (n === 0 ? "" : String(n));
 import { abrirWhatsApp } from "@/utils/whatsapp";
 import { gerarOrcamentoPDF } from "@/utils/pdf";
 import { useToast } from "./Toast";
+import { ServicePicker } from "./ServicePicker";
 import {
   Button,
   DocIcon,
@@ -60,7 +63,7 @@ export function QuoteForm({ inicial, company, onSalvar, onCancelar }: Props) {
   const [form, setForm] = useState<OrcamentoForm>(() => ({
     id: inicial?.id ?? "",
     numero: inicial?.numero ?? "—",
-    data: inicial?.data ?? new Date().toISOString().slice(0, 10),
+    data: inicial?.data ?? todayLocal(),
     validade: inicial?.validade ?? company.validadePadrao,
     status: inicial?.status ?? "rascunho",
     desconto: inicial?.desconto ?? 0,
@@ -98,19 +101,37 @@ export function QuoteForm({ inicial, company, onSalvar, onCancelar }: Props) {
   const addItem = () =>
     setForm((f) => ({ ...f, itens: [...f.itens, itemVazio()] }));
 
-  const addPredef = (desc: string, valor: number) =>
-    setForm((f) => ({
-      ...f,
-      itens: [
-        ...f.itens,
-        { id: uid(), descricao: desc, quantidade: 1, valorUnitario: valor },
-      ],
-    }));
+  /**
+   * Ao escolher um serviço: se existir um item vazio (sem descrição),
+   * ele é preenchido. Caso contrário, cria um novo item.
+   */
+  const addServico = (descricao: string) => {
+    setForm((f) => {
+      const idxVazio = f.itens.findIndex((it) => !it.descricao.trim());
+      if (idxVazio !== -1) {
+        const itens = f.itens.map((it, i) =>
+          i === idxVazio ? { ...it, descricao } : it
+        );
+        return { ...f, itens };
+      }
+      return {
+        ...f,
+        itens: [
+          ...f.itens,
+          { id: uid(), descricao, quantidade: 1, valorUnitario: 0 },
+        ],
+      };
+    });
+    if (descricao) push("Serviço adicionado ✓", "success");
+  };
 
   const removeItem = (id: string) =>
     setForm((f) => ({
       ...f,
-      itens: f.itens.length > 1 ? f.itens.filter((it) => it.id !== id) : f.itens,
+      itens:
+        f.itens.length > 1
+          ? f.itens.filter((it) => it.id !== id) // remove o item
+          : [itemVazio()], // único item: limpa em vez de não fazer nada
     }));
 
   const onSalvarHandler = () => {
@@ -208,19 +229,8 @@ export function QuoteForm({ inicial, company, onSalvar, onCancelar }: Props) {
               Serviços e Valores
             </SectionTitle>
 
-            {/* Atalhos */}
-            <div className="mb-4 flex flex-wrap gap-1.5">
-              {servicosPreDefinidos.slice(0, 8).map((s) => (
-                <button
-                  key={s.descricao}
-                  onClick={() => addPredef(s.descricao, s.valor)}
-                  className="animate-fade-in rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600 transition hover:-translate-y-0.5 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:border-sky-400/40 dark:hover:bg-sky-500/10 dark:hover:text-sky-300"
-                  type="button"
-                >
-                  + {s.descricao}
-                </button>
-              ))}
-            </div>
+            {/* Seletor de serviços em caixinha */}
+            <ServicePicker onPick={addServico} />
 
             {/* Itens */}
             <div className="space-y-2.5">
@@ -235,8 +245,11 @@ export function QuoteForm({ inicial, company, onSalvar, onCancelar }: Props) {
                     </span>
                     <button
                       type="button"
-                      onClick={() => removeItem(it.id)}
-                      className="rounded-lg p-1 text-slate-300 transition hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-500/10"
+                      onClick={() => {
+                        removeItem(it.id);
+                        push("Item removido", "info");
+                      }}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-300 transition hover:bg-red-50 hover:text-red-500 active:scale-90 dark:hover:bg-red-500/10"
                       aria-label="Remover item"
                     >
                       <TrashIcon className="h-4 w-4" />
@@ -252,10 +265,12 @@ export function QuoteForm({ inicial, company, onSalvar, onCancelar }: Props) {
                     <Field label="Qtd">
                       <input
                         type="number"
+                        inputMode="numeric"
                         min={0}
                         step={1}
                         className={inputCls}
-                        value={it.quantidade}
+                        value={numField(it.quantidade)}
+                        placeholder="1"
                         onChange={(e) =>
                           setItem(it.id, { quantidade: Number(e.target.value) })
                         }
@@ -264,10 +279,12 @@ export function QuoteForm({ inicial, company, onSalvar, onCancelar }: Props) {
                     <Field label="Valor unit. (R$)">
                       <input
                         type="number"
+                        inputMode="decimal"
                         min={0}
                         step="0.01"
                         className={inputCls}
-                        value={it.valorUnitario}
+                        value={numField(it.valorUnitario)}
+                        placeholder="0,00"
                         onChange={(e) =>
                           setItem(it.id, { valorUnitario: Number(e.target.value) })
                         }
@@ -277,7 +294,7 @@ export function QuoteForm({ inicial, company, onSalvar, onCancelar }: Props) {
                       <span className="mb-1.5 block text-xs font-semibold text-slate-600 dark:text-slate-300">
                         Total
                       </span>
-                      <span className="rounded-xl bg-white px-3 py-2.5 text-sm font-bold text-slate-800 ring-1 ring-slate-200 dark:bg-white/5 dark:text-slate-100 dark:ring-white/10">
+                      <span className="flex min-h-[46px] items-center rounded-xl bg-white px-3 py-3 text-sm font-bold text-slate-800 ring-1 ring-slate-200 dark:bg-white/5 dark:text-slate-100 dark:ring-white/10">
                         {formatCurrency(itemTotal(it))}
                       </span>
                     </div>
@@ -314,6 +331,7 @@ export function QuoteForm({ inicial, company, onSalvar, onCancelar }: Props) {
               <Field label="Validade (dias)">
                 <input
                   type="number"
+                  inputMode="numeric"
                   min={1}
                   className={inputCls}
                   value={form.validade}
@@ -330,7 +348,7 @@ export function QuoteForm({ inicial, company, onSalvar, onCancelar }: Props) {
               </Field>
               <Field label="Observações" className="sm:col-span-2">
                 <textarea
-                  className={inputCls + " min-h-[80px] resize-y"}
+                  className={inputCls + " min-h-[80px] resize-y leading-relaxed"}
                   value={form.observacoes}
                   onChange={(e) => set("observacoes", e.target.value)}
                   placeholder="Informações adicionais, prazos de execução, materiais, etc."
@@ -363,10 +381,12 @@ export function QuoteForm({ inicial, company, onSalvar, onCancelar }: Props) {
                 <Field label="Desconto (R$)">
                   <input
                     type="number"
+                    inputMode="decimal"
                     min={0}
                     step="0.01"
                     className={inputCls}
-                    value={form.desconto}
+                    value={numField(form.desconto)}
+                    placeholder="0,00"
                     onChange={(e) => set("desconto", Number(e.target.value))}
                   />
                 </Field>

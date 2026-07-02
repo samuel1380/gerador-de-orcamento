@@ -138,6 +138,7 @@ export function CompanyModal({ open, company, onClose, onSalvar }: Props) {
           <Field label="Validade padrão (dias)">
             <input
               type="number"
+              inputMode="numeric"
               min={1}
               className={inputCls}
               value={form.validadePadrao}

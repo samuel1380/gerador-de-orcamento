@@ -10,8 +10,16 @@ import { uid } from "@/utils/format";
 
 function gerarNumeroOrcamento(lista: Orcamento[]): string {
   const ano = new Date().getFullYear();
-  const doAno = lista.filter((o) => o.numero.includes(String(ano))).length;
-  const seq = String(doAno + 1).padStart(4, "0");
+  // Encontra a maior sequência já usada no ano para evitar repetição,
+  // mesmo após excluir orçamentos.
+  let maxSeq = 0;
+  lista.forEach((o) => {
+    const match = o.numero.match(/^(\d{4})-(\d+)$/);
+    if (match && Number(match[1]) === ano) {
+      maxSeq = Math.max(maxSeq, Number(match[2]));
+    }
+  });
+  const seq = String(maxSeq + 1).padStart(4, "0");
   return `${ano}-${seq}`;
 }
 

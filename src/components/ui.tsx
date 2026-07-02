@@ -15,46 +15,51 @@ import type { QuoteStatus } from "@/types";
 export function Logo({ size = 40 }: { size?: number }) {
   return (
     <div
-      className="relative flex shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-600 via-sky-500 to-cyan-400 shadow-lg shadow-sky-500/30"
+      className="relative flex shrink-0 items-center justify-center overflow-hidden rounded-2xl shadow-lg shadow-sky-500/30"
       style={{ width: size, height: size }}
     >
-      <span className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/30 to-transparent opacity-60" />
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        className="relative text-white drop-shadow"
-        style={{ width: size * 0.58, height: size * 0.58 }}
-      >
-        <path
-          d="M12 2.5c3.8 4.3 6 7.6 6 10.6A6 6 0 0 1 6 13.1c0-3 2.2-6.3 6-10.6Z"
-          fill="currentColor"
-          opacity="0.98"
-        />
-        <path
-          d="M12 8.5c1.4 1.9 2.3 3.4 2.3 4.6A2.3 2.3 0 0 1 9.7 13c0-1.2.9-2.7 2.3-4.6Z"
-          fill="#0c4a6e"
-          opacity="0.45"
-        />
-      </svg>
+      <img
+        src="/logo.png"
+        alt="INTECH Logo"
+        className="h-full w-full object-contain"
+      />
     </div>
   );
 }
 
-export function LogoLockup() {
-  return (
-    <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+export function LogoLockup({ onClick }: { onClick?: () => void }) {
+  const content = (
+    <>
       <div className="animate-fade-in">
         <Logo size={40} />
       </div>
       <div className="min-w-0 leading-tight">
         <p className="truncate text-sm font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-base">
-          INTECH <span className="bg-gradient-to-r from-sky-500 to-cyan-400 bg-clip-text text-transparent">DESENTUPIDORA</span>
+          INTECH{" "}
+          <span className="bg-gradient-to-r from-sky-500 to-cyan-400 bg-clip-text text-transparent">
+            DESENTUPIDORA
+          </span>
         </p>
         <p className="hidden text-[11px] font-medium text-slate-400 dark:text-slate-500 sm:block">
           Gerador de Orçamentos
         </p>
       </div>
-    </div>
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button
+        onClick={onClick}
+        className="flex min-w-0 items-center gap-2.5 rounded-xl py-1 transition active:scale-95 sm:gap-3 sm:pr-2"
+        title="Voltar ao início"
+      >
+        {content}
+      </button>
+    );
+  }
+  return (
+    <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">{content}</div>
   );
 }
 
@@ -293,7 +298,7 @@ export function StatusBadge({ status }: { status: QuoteStatus }) {
    FORM FIELDS
 ========================================================= */
 export const inputCls =
-  "w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 hover:border-slate-300 focus:border-sky-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:hover:border-white/20 dark:focus:border-sky-400/60 dark:focus:ring-sky-400/10";
+  "w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-[16px] leading-none text-slate-800 placeholder:text-slate-400 transition-all duration-200 hover:border-slate-300 focus:border-sky-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:hover:border-white/20 dark:focus:border-sky-400/60 dark:focus:ring-sky-400/10";
 
 export function Field({
   label,

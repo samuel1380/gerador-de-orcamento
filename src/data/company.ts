@@ -17,18 +17,76 @@ export const defaultCompany: CompanyInfo = {
     "Pix, dinheiro, cartão de débito/crédito ou transferência bancária",
 };
 
-/** Serviços comuns de uma desentupidora para preenchimento rápido */
-export const servicosPreDefinidos: { descricao: string; valor: number }[] = [
-  { descricao: "Desentupimento de esgoto", valor: 0 },
-  { descricao: "Desentupimento de pia de cozinha", valor: 0 },
-  { descricao: "Desentupimento de pia de banheiro", valor: 0 },
-  { descricao: "Desentupimento de vaso sanitário", valor: 0 },
-  { descricao: "Desentupimento de ralo", valor: 0 },
-  { descricao: "Desentupimento de coluna de água", valor: 0 },
-  { descricao: "Limpeza de caixa de gordura", valor: 0 },
-  { descricao: "Limpeza e desentupimento de fossa", valor: 0 },
-  { descricao: "Hidrojateamento de tubulação", valor: 0 },
-  { descricao: "Inspeção com câmera térmica/câmera de vídeo", valor: 0 },
-  { descricao: "Rastreamento de tubulação", valor: 0 },
-  { descricao: "Limpeza de caixa d'água", valor: 0 },
+/** Serviços de uma desentupidora, organizados por categoria */
+export interface CategoriaServicos {
+  categoria: string;
+  emoji: string;
+  servicos: string[];
+}
+
+export const servicosCategorizados: CategoriaServicos[] = [
+  {
+    categoria: "Desentupimento",
+    emoji: "🔧",
+    servicos: [
+      "Desentupimento de esgoto geral",
+      "Desentupimento de pia de cozinha",
+      "Desentupimento de pia de banheiro",
+      "Desentupimento de tanque",
+      "Desentupimento de vaso sanitário",
+      "Desentupimento de mictório",
+      "Desentupimento de ralo de box / chuveiro",
+      "Desentupimento de ralo de piso",
+      "Desentupimento de ralo seco / efeito",
+      "Desentupimento de coluna de água pluvial",
+      "Desentupimento de coluna de esgoto",
+      "Desentupimento de calha / condutor",
+      "Desentupimento de grelha de garagem",
+      "Desentupimento de tubulação em geral",
+    ],
+  },
+  {
+    categoria: "Limpeza e Caixas",
+    emoji: "🧰",
+    servicos: [
+      "Limpeza de caixa de gordura",
+      "Limpeza e higienização de caixa d'água",
+      "Limpeza e desentupimento de fossa",
+      "Esgotamento / bombeamento de fossa",
+      "Limpeza de sumidouro / fossa séptica",
+      "Remoção de raiz em tubulação",
+    ],
+  },
+  {
+    categoria: "Hidrojateamento",
+    emoji: "💧",
+    servicos: [
+      "Hidrojateamento de tubulação de esgoto",
+      "Hidrojateamento de caixa de gordura",
+      "Hidrojateamento de coluna",
+      "Hidrojateamento preventivo",
+    ],
+  },
+  {
+    categoria: "Inspeção e Diagnóstico",
+    emoji: "📸",
+    servicos: [
+      "Inspeção com câmera de vídeo",
+      "Inspeção com câmera térmica",
+      "Rastreamento de tubulação",
+      "Localização de vazamento",
+      "Laudo técnico de inspeção",
+    ],
+  },
+  {
+    categoria: "Serviços Extras",
+    emoji: "🚚",
+    servicos: [
+      "Visita técnica / avaliação",
+      "Atendimento de emergência 24h",
+      "Serviço em horário noturno",
+      "Serviço em final de semana / feriado",
+      "Deslocamento",
+    ],
+  },
 ];

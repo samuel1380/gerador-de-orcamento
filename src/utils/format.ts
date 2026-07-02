@@ -12,11 +12,32 @@ export function formatNumber(value: number): string {
   }).format(isFinite(value) ? value : 0);
 }
 
+/**
+ * Cria uma data a partir de string ISO tratando datas SEM hora como locais,
+ * evitando o deslocamento de fuso (ex.: "2025-01-15" virar 14/01 no Brasil).
+ */
+export function parseLocalDate(iso: string): Date {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+    const [y, m, d] = iso.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  }
+  return new Date(iso);
+}
+
 export function formatDate(iso: string): string {
   if (!iso) return "";
-  const d = new Date(iso);
+  const d = parseLocalDate(iso);
   if (isNaN(d.getTime())) return "";
   return d.toLocaleDateString("pt-BR");
+}
+
+/** Data de hoje no formato YYYY-MM-DD usando o fuso local do dispositivo. */
+export function todayLocal(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 
 export function formatDateTime(iso: string): string {

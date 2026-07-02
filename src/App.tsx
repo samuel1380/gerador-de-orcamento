@@ -37,9 +37,15 @@ function Shell() {
 
   const salvar = (dados: OrcamentoForm): Orcamento => {
     let result: Orcamento;
-    if (dados.id && orcamentos.some((o) => o.id === dados.id)) {
+    const existente = orcamentos.find((o) => o.id === dados.id);
+    if (dados.id && existente) {
       atualizarOrcamento(dados.id, dados);
-      result = { ...dados, criadoEm: "", atualizadoEm: "" } as Orcamento;
+      // preserva a data de criação original do orçamento
+      result = {
+        ...dados,
+        criadoEm: existente.criadoEm,
+        atualizadoEm: new Date().toISOString(),
+      } as Orcamento;
     } else {
       result = criarOrcamento(dados);
     }
@@ -58,7 +64,7 @@ function Shell() {
       {/* Cabeçalho */}
       <header className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/70 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/70">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
-          <LogoLockup />
+          <LogoLockup onClick={() => setView({ type: "lista" })} />
           <div className="flex items-center gap-2">
             <ThemeToggle theme={theme} onToggle={toggle} />
             <button

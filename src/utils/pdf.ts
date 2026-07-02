@@ -239,13 +239,20 @@ export function gerarOrcamentoPDF(
      TABELA DE SERVIÇOS
   ============================================================ */
   const head = [["#", "Descrição do Serviço", "Qtd", "Valor Unit.", "Total"]];
-  const body = orc.itens.map((it, idx) => [
-    String(idx + 1),
-    it.descricao || "—",
-    formatNumber(it.quantidade),
-    formatCurrency(it.valorUnitario),
-    formatCurrency((it.quantidade || 0) * (it.valorUnitario || 0)),
-  ]);
+  // Ignora itens sem descrição (ex.: o item vazio padrão)
+  const itensValidos = orc.itens.filter(
+    (it) => (it.descricao || "").trim() !== ""
+  );
+  const body =
+    itensValidos.length > 0
+      ? itensValidos.map((it, idx) => [
+          String(idx + 1),
+          it.descricao || "—",
+          formatNumber(it.quantidade),
+          formatCurrency(it.valorUnitario),
+          formatCurrency((it.quantidade || 0) * (it.valorUnitario || 0)),
+        ])
+      : [["", "Nenhum serviço informado", "", "", ""]];
 
   autoTable(doc, {
     startY: y,
@@ -388,7 +395,10 @@ export function gerarOrcamentoPDF(
     drawFooter(doc, company, primary, i, pageCount);
   }
 
-  const nome = `Orcamento_${orc.numero}.pdf`.replace(/\s+/g, "");
+  // Sanitiza o número do orçamento p/ um nome de arquivo válido
+  const numArquivo =
+    orc.numero && orc.numero !== "—" ? orc.numero.replace(/[^\w\-]/g, "") : "rascunho";
+  const nome = `Orcamento_${numArquivo}.pdf`;
   if (acao === "abrir") {
     doc.output("dataurlnewwindow");
   } else {
