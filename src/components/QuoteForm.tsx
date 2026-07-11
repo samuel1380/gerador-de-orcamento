@@ -157,7 +157,7 @@ export function QuoteForm({ inicial, company, onSalvar, onCancelar }: Props) {
   };
 
   return (
-    <div className="mx-auto max-w-5xl pb-28">
+    <div className="mx-auto max-w-5xl pb-32">
       {/* Cabeçalho do formulário */}
       <div className="mb-5 flex flex-wrap animate-fade-down items-center justify-between gap-3">
         <div>
@@ -360,7 +360,7 @@ export function QuoteForm({ inicial, company, onSalvar, onCancelar }: Props) {
 
         {/* Resumo lateral */}
         <div className="lg:col-span-1">
-          <div className="lg:sticky lg:top-24">
+          <div className="lg:sticky lg:top-[calc(6rem+var(--sat))]">
             <div className="animate-fade-up overflow-hidden rounded-2xl border border-slate-200/70 bg-white/80 shadow-sm shadow-slate-900/5 backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.03] dark:shadow-black/20">
               <div className="relative overflow-hidden bg-gradient-to-br from-sky-700 via-sky-600 to-cyan-500 px-5 py-4 text-white">
                 <div className="absolute inset-0 animate-gradient bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.25),transparent)] bg-[length:200%_100%]" />
@@ -419,8 +419,11 @@ export function QuoteForm({ inicial, company, onSalvar, onCancelar }: Props) {
         </div>
       </div>
 
-      {/* Barra fixa no mobile */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/90 p-3 backdrop-blur-lg dark:border-white/10 dark:bg-slate-900/90 lg:hidden">
+      {/* Barra fixa no mobile — respeita a área segura inferior (home indicator) */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/90 p-3 backdrop-blur-lg dark:border-white/10 dark:bg-slate-900/90 lg:hidden"
+        style={{ paddingBottom: "calc(var(--sab) + 0.75rem)" }}
+      >
         <Button size="lg" className="w-full" onClick={onSalvarEPdf}>
           <DocIcon className="h-5 w-5" /> Salvar e baixar PDF · {formatCurrency(total)}
         </Button>

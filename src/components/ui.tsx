@@ -390,7 +390,10 @@ export function Modal({
   const w = size === "md" ? "max-w-lg" : size === "xl" ? "max-w-4xl" : "max-w-2xl";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 p-0 backdrop-blur-md sm:items-center sm:p-4">
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 p-0 backdrop-blur-md sm:items-center sm:p-4"
+      style={{ paddingTop: "var(--sat)" }}
+    >
       <div
         className={cn(
           "absolute inset-0",
@@ -400,10 +403,13 @@ export function Modal({
       />
       <div
         className={cn(
-          "relative flex max-h-[94vh] w-full flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl ring-1 ring-slate-900/5 sm:rounded-3xl dark:bg-slate-900 dark:ring-white/10",
+          "relative flex max-h-[calc(100vh-var(--sat))] w-full flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl ring-1 ring-slate-900/5 sm:max-h-[94vh] sm:rounded-3xl dark:bg-slate-900 dark:ring-white/10",
           w,
           open ? "animate-sheet-up sm:animate-scale-in" : ""
         )}
+        style={{
+          paddingBottom: "var(--sab)",
+        }}
       >
         <div className="relative flex items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-white/10">
           <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-sky-400/40 to-transparent" />

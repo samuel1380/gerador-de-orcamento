@@ -10,6 +10,11 @@
 
 :root {
   color-scheme: light;
+  /* Safe area insets com fallback 0px (suporte a iPhone notch/Dynamic Island e Android) */
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
 }
 .dark {
   color-scheme: dark;
@@ -23,10 +28,55 @@ html {
   scroll-behavior: smooth;
 }
 
+html,
+body {
+  /* Garante que o conteúdo respeite a área segura横向 e superior/opcional */
+  overscroll-behavior-y: none;
+}
+
 body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* ===== Utilitários de Safe Area (PWA / mobile com notch) ===== */
+/* Padding superior dinâmico (barra de status / notch / Dynamic Island) */
+.pt-safe {
+  padding-top: var(--sat);
+}
+/* Padding inferior dinâmico (home indicator / barra de gestos) */
+.pb-safe {
+  padding-bottom: var(--sab);
+}
+/* Padding lateral dinâmico (paisagem em telas com notch) */
+.px-safe {
+  padding-left: var(--sal);
+  padding-right: var(--sar);
+}
+/* Margem superior dinâmica (para header sticky empurrar conteúdo) */
+.mt-safe {
+  margin-top: var(--sat);
+}
+/* Altura que inclui o inset superior (útil para elementos fixos no topo) */
+.h-safe-top {
+  top: var(--sat);
+}
+/* Altura que inclui o inset inferior */
+.h-safe-bottom {
+  bottom: var(--sab);
+}
+
+/* Combinações comuns */
+.safe-top {
+  padding-top: var(--sat);
+}
+.safe-bottom {
+  padding-bottom: var(--sab);
+}
+.safe-x {
+  padding-left: var(--sal);
+  padding-right: var(--sar);
 }
 
 /* Transição suave de tema em elementos-chave */

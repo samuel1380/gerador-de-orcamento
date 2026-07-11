@@ -61,8 +61,11 @@ function Shell() {
       <AnimatedBackground />
       <PwaManager hidden={view.type !== "lista"} />
 
-      {/* Cabeçalho */}
-      <header className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/70 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/70">
+      {/* Cabeçalho — respeita a área segura superior (notch / Dynamic Island / status bar) */}
+      <header
+        className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/70 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/70"
+        style={{ paddingTop: "var(--sat)" }}
+      >
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <LogoLockup onClick={() => setView({ type: "lista" })} />
           <div className="flex items-center gap-2">
@@ -109,8 +112,11 @@ function Shell() {
         </div>
       </main>
 
-      {/* Rodapé */}
-      <footer className="border-t border-slate-200/70 bg-white/50 py-6 backdrop-blur-sm dark:border-white/10 dark:bg-slate-950/40">
+      {/* Rodapé — respeita a área segura inferior (home indicator / gestos) */}
+      <footer
+        className="border-t border-slate-200/70 bg-white/50 py-6 backdrop-blur-sm dark:border-white/10 dark:bg-slate-950/40"
+        style={{ paddingBottom: "calc(var(--sab) + 1.5rem)" }}
+      >
         <div className="mx-auto max-w-6xl px-4 text-center">
           <p className="text-xs text-slate-500 dark:text-slate-400">
             {company.nome} · Sistema de Orçamentos

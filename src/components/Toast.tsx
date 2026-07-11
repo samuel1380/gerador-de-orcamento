@@ -48,7 +48,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <Ctx.Provider value={{ push }}>
       {children}
-      <div className="pointer-events-none fixed inset-x-0 bottom-4 z-[70] flex flex-col items-center gap-2 px-3 sm:bottom-6 sm:right-6 sm:left-auto sm:items-end sm:px-0">
+      <div className="pointer-events-none fixed inset-x-0 bottom-4 z-[70] flex flex-col items-center gap-2 px-3 sm:bottom-6 sm:right-6 sm:left-auto sm:items-end sm:px-0"
+        style={{ paddingBottom: "var(--sab)" }}
+      >
         {toasts.map((t) => (
           <ToastView key={t.id} toast={t} onClose={() => remove(t.id)} />
         ))}

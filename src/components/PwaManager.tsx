@@ -46,7 +46,10 @@ export function PwaManager({ hidden = false }: { hidden?: boolean }) {
   if (!deferred || fechado || hidden) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 p-3">
+    <div
+      className="fixed inset-x-0 bottom-0 z-40 p-3"
+      style={{ paddingBottom: "calc(var(--sab) + 0.75rem)" }}
+    >
       <div className="mx-auto flex max-w-md animate-fade-up items-center gap-3 rounded-2xl bg-slate-900 p-3 text-white shadow-2xl ring-1 ring-white/10">
         <img
           src="/icon-192.png"
